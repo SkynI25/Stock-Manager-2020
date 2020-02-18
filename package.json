@@ -1,0 +1,8 @@
+{
+  "name": "Stock-Manager-2020",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/SkynI25/Stock-Manager-2020.git",
+  "author": "SkynI25 <rlxo1651@daum.net>",
+  "license": "MIT"
+}
