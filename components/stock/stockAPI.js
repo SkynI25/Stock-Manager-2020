@@ -1,21 +1,43 @@
-function getStockData() {
-  const alpaHeader = new Headers({
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'APCA-API-KEY-ID': 'PKN25EWOHIKOXKE93MQ9',
-    'APCA-API-SECRET-KEY': '116hFxS4clN0p7fFqK1sFGKlByQc0kQE2ueTVzh3',
-  });
-  const alpaReq = new Request('https://paper-api.alpaca.markets/v2/account', {
-    method: 'GET',
-    headers: alpaHeader,
-  });
-  fetch(alpaReq)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(err => {
-      console.error(err);
-    });
+var ws = new WebSocket('ws://localhost:3100');
+let INFINITE_NUM = 1000;
+
+function openConn() {
+  return new Promise(function (resolve, reject) {
+    ws.onopen = event => {
+      let sendData = { event: 'open' };
+      ws.send(JSON.stringify(sendData));
+      resolve();
+    };
+  })
 }
 
-export { getStockData };
+function sendRequest() {
+  return new Promise(function (resolve, reject) {
+    let sendData = {event: 'req', data: ''};
+    ws.send(JSON.stringify(sendData));
+    resolve();
+  })
+}
+
+function receiveData() {
+  return new Promise(function (resolve, reject) {
+    for (let i = 0; i < INFINITE_NUM; i++) {
+      setTimeout(() => {
+        ws.onmessage = event => {
+          let recData = JSON.parse(event.data);
+          let data2String = recData.data;
+          switch (recData.event) {
+            case 'res':
+              document.getElementById('content').innerHTML = JSON.stringify(data2String);
+              resolve("received");
+              break;
+            default:
+          }
+        };
+      }, 1000 * i);
+    }
+  })
+}
+
+
+export { openConn, sendRequest, receiveData };
